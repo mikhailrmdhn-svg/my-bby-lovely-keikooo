@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C:\SYSTEM\LOVE_SHELL.EXE</title>
+    <style>
+        /* Styling Layar Retro / MS-DOS / PowerShell */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #111;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00ff66; /* Warna hijau khas monitor tabung */
+            overflow: hidden;
+        }
+
+        /* Bingkai Jendela GUI Jadul */
+        .window {
+            width: 100%;
+            max-width: 750px;
+            background-color: #050a14; /* Biru gelap ala PowerShell klasik */
+            border: 3px solid #c0c0c0;
+            box-shadow: 6px 6px 0px #000000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efek garis-garis monitor CRT jadul */
+        .window::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+            z-index: 2;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Title Bar ala Windows 95/98 */
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 6px 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #c0c0c0;
+            font-size: 14px;
+            user-select: none;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .title-bar-controls span {
+            display: inline-block;
+            background: #c0c0c0;
+            color: black;
+            width: 18px;
+            height: 18px;
+            text-align: center;
+            line-height: 16px;
+            font-size: 12px;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-right: 2px solid #444;
+            border-bottom: 2px solid #444;
+            cursor: pointer;
+        }
+
+        /* Isi Terminal */
+        .terminal-content {
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 4px rgba(0, 255, 102, 0.5);
+        }
+
+        .header-text {
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        /* Daftar Pilihan Menu 1-9 */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 6px;
+            margin-bottom: 15px;
+            border-top: 1px dashed #00ff66;
+            border-bottom: 1px dashed #00ff66;
+            padding: 12px 0;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            padding: 4px 6px;
+            transition: 0.1s;
+        }
+
+        .menu-item:hover {
+            background-color: #00ff66;
+            color: #050a14;
+            text-shadow: none;
+            font-weight: bold;
+        }
+
+        /* Area Hasil Output */
+        #output-area {
+            margin-top: 15px;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            min-height: 180px;
+        }
+
+        /* Kursor Kedip-kedip */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 16px;
+            background-color: #00ff66;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Warna khusus untuk Love Angka */
+        .heart-ascii {
+            color: #ff4d79;
+            text-shadow: 0 0 8px rgba(255, 77, 121, 0.8);
+            font-weight: bold;
+            line-height: 1.15;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        /* Scrollbar retro */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050a14; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ff66; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="window">
+    <div class="title-bar">
+        <span>C:\WINDOWS\system32\love_powershell.exe</span>
+        <div class="title-bar-controls">
+            <span>_</span>
+            <span>□</span>
+            <span>X</span>
+        </div>
+    </div>
+    <div class="terminal-content" id="terminal">
+        <div class="header-text">
+            HeartOS PowerShell [Version 1.4.11]<br>
+            (c) Love Corporation. All rights reserved.<br><br>
+            Memuat memori tentang kamu... [100% SELESAI]<br>
+            Silakan tekan <strong>angka [1 - 9] di keyboard</strong> atau klik menu di bawah:
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-item" onclick="jalankanPerintah('1')">[1] Cek Status Hati</div>
+            <div class="menu-item" onclick="jalankanPerintah('2')">[2] Pesan Hari Ini</div>
+            <div class="menu-item" onclick="jalankanPerintah('3')">[3] Alasan Sayang Kamu</div>
+            <div class="menu-item" onclick="jalankanPerintah('4')">[4] Lagu Buat Kamu</div>
+            <div class="menu-item" onclick="jalankanPerintah('5')">[5] Janji Sistem</div>
+            <div class="menu-item" onclick="jalankanPerintah('6')">[6] Laporan Rindu.log</div>
+            <div class="menu-item" onclick="jalankanPerintah('7')">[7]Scan Virus Senyuman</div>
+            <div class="menu-item" onclick="jalankanPerintah('8')">[8] Ramalan Masa Depan</div>
+            <div class="menu-item" onclick="jalankanPerintah('9')">[9] EKSEKUSI LOVE.EXE ❤️</div>
+        </div>
+
+        <div>
+            PS C:\Users\SayangKamu&gt; <span id="typed-cmd"></span><span class="cursor"></span>
+        </div>
+
+        <div id="output-area"></div>
+    </div>
+</div>
+
+<script>
+    // Data isi pesan dari angka 1 sampai 8 (Bisa kamu edit kata-katanya!)
+    const databasePesan = {
+        '1': "Mengecek status hati...\n----------------------------------\nCPU Hati     : 100% Terpakai buat mikirin kamu.\nRAM Memori   : Penuh sama keikooooo ❤.\nFirewall     : Aktif (Tertutup buat yang lain, cuma buka akses buat kamu).",
+        
+'2': "Membuka pesan_hari_ini.txt...\n----------------------------------\nHai Keiko sayang... Gimana hari ini? Semoga semuanya lancar dan nggak bikin kamu pusing ya. Aku cuma mau ngingetin, sepadat apapun aktivitas kamu sekarang, jangan pernah diporsir terus sampai lupa istirahat atau telat makan, ya. Kalau nanti di tengah jalan rasanya capek banget atau ada hal yang bikin kamu bad mood, inget kalau di sini selalu ada aku. Kapanpun kamu butuh tempat buat numpahin unek-unek, cerita hal random, atau cuma mau didengerin pas lagi diam aja, aku bakal selalu standby buat kamu. Semangat ya, cantiknya aku! I love you so much. ❤️",        
+        '3': "Menampilkan daftar alasan_sayang.db...\n----------------------------------\n1. Cara kamu ketawa yang selalu bikin suasana adem.\n2. Sabarnya kamu ngadepin aku yang kadang random.\n3. Nyamannya ngobrol sama kamu dari hal receh sampai serius.\n4. Karena kamu itu ya kamu, nggak ada duanya.",
+        
+        '4': "Memutar playlist_kita.mp3...\n----------------------------------\n♪ Now Playing: Lagu favorit yang selalu ngingetin aku sama kamu.\n[Extreme - More Than Words] 02:14 / 05:34\nStatus: Repeat selamanya.",
+        
+        '5': "Membaca protokol janji_sistem.sys...\n----------------------------------\n- Nggak akan biarin kamu ngerasa sendirian.\n- Selalu jadi orang pertama yang dukung mimpi-mimpi kamu.\n- Tetap sama kamu, baik pas lagi seru-serunya maupun pas lagi susah.",
+        
+        '6': "Membaca file Rindu.log...\n----------------------------------\n[WARNING!] Kapasitas kangen sudah melewati batas maksimum (9999%).\nSolusi sistem: Harus segera ketemu, jalan bareng, dan ngobrol banyak!",
+        
+        '7': "Menjalankan Antivirus...\n----------------------------------\nScanning selesai!\nDitemukan 1 anomali berbahaya: Senyuman kamu.\nEfek samping: Bikin salah tingkah dan gagal fokus seharian.\nStatus: Tidak bisa dihapus (Sudah terlanjur nyaman).",
+        
+        '8': "Menghitung algoritma masa_depan.exe...\n----------------------------------\nPrediksi sistem 100% akurat:\nBakal ada lebih banyak perjalanan seru, tempat makan baru yang kita cobain bareng, dan cerita bahagia yang kita tulis berdua."
+    };
+
+    // Bentuk Love dari susunan angka (Pilihan nomor 9)
+    const gambarLoveAngka = `
+       1414141       1414141
+     14141414141   14141414141
+   14141414141414114141414141414
+   14141414141414141414141414141
+    141414141414141414141414141
+      14141414141414141414141
+        1414141414141414141
+          141414141414141
+            14141414141
+              1414141
+                141
+                 1`;
+
+    let sedangMengetik = false;
+    let timerKetik = null;
+
+    // Fungsi buat nangkep pencetan angka 1-9 di keyboard
+    document.addEventListener('keydown', function(event) {
+        if (event.key >= '1' && event.key <= '9') {
+            jalankanPerintah(event.key);
+        }
+    });
+
+    function jalankanPerintah(angka) {
+        // Kalau efek ketik sebelumnya masih jalan, di-stop dulu biar nggak tabrakan
+        if (timerKetik) {
+            clearInterval(timerKetik);
+        }
+
+        const cmdSpan = document.getElementById('typed-cmd');
+        const outputArea = document.getElementById('output-area');
+        const terminal = document.getElementById('terminal');
+
+        cmdSpan.textContent = "run_option_" + angka + ".exe";
+        outputArea.innerHTML = "";
+
+        if (angka === '9') {
+            // Efek khusus buat nomor 9 (Love Angka)
+            outputArea.innerHTML = "Menjalankan <strong>LOVE.EXE</strong>... Merangkai kode angka spesial:<br>";
+            
+            const preLove = document.createElement('div');
+            preLove.className = 'heart-ascii';
+            outputArea.appendChild(preLove);
+
+            const pesanTambahan = document.createElement('div');
+            outputArea.appendChild(pesanTambahan);
+
+            // Efek munculin love baris demi baris
+            const barisLove = gambarLoveAngka.split('\n');
+            let indexBaris = 0;
+
+            timerKetik = setInterval(() => {
+                if (indexBaris < barisLove.length) {
+                    preLove.textContent += barisLove[indexBaris] + '\n';
+                    indexBaris++;
+                    terminal.scrollTop = terminal.scrollHeight;
+                } else {
+                    clearInterval(timerKetik);
+                    ketikTeks(pesanTambahan, "\n[SYSTEM MESSAGE]: Dari sekian banyak angka dan logika di dunia ini, cuma kamu satu-satunya yang paling berarti buat aku. I Love You! ❤️");
+                }
+            }, 90);
+
+        } else {
+            // Efek ketik satu-satu buat nomor 1-8
+            ketikTeks(outputArea, databasePesan[angka]);
+        }
+    }
+
+    function ketikTeks(elemen, teks) {
+        let i = 0;
+        const terminal = document.getElementById('terminal');
+        timerKetik = setInterval(() => {
+            if (i < teks.length) {
+                elemen.textContent += teks.charAt(i);
+                i++;
+                terminal.scrollTop = terminal.scrollHeight;
+            } else {
+                clearInterval(timerKetik);
+            }
+        }, 20); // Kecepatan ketik (makin kecil makin ngebut)
+    }
+</script>
+
+</body>
+</html>
